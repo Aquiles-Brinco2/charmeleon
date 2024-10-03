@@ -1,4 +1,3 @@
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:saltarin/components/platformManager.dart';
 import 'package:saltarin/components/player.dart';
 import 'package:saltarin/components/lose_zone.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
+
 
 class Saltarin extends FlameGame with HasCollisionDetection {
   late PlatformManager platformManager;
@@ -50,7 +51,7 @@ class Saltarin extends FlameGame with HasCollisionDetection {
     }
 
     addLoseZone();
-    overlays.addEntry('lose', (context, game) => _buildLoseOverlay());
+    overlays.addEntry('lose', (context, game) => _buildLoseOverlay(Saltarin()));
   }
 
   void increaseScore() {
@@ -66,12 +67,11 @@ class Saltarin extends FlameGame with HasCollisionDetection {
     scoreText.text = 'Score: $score';
   }
 
-  void restartGame() {
-    main();
-  }
+
+
 }
 
-Widget _buildLoseOverlay() {
+Widget _buildLoseOverlay(Saltarin game) {
   return Center(
     child: Container(
       padding: const EdgeInsets.all(20),
@@ -89,15 +89,16 @@ Widget _buildLoseOverlay() {
           ),
           ElevatedButton(
             onPressed: () {
-              Saltarin().restartGame();
+              SystemNavigator.pop(); 
             },
-            child: const Text('Continuar'),
+            child: const Text('Salir'),
           ),
         ],
       ),
     ),
   );
 }
+
 
 @override
 Widget buildOverlay(String overlayKey) {
@@ -126,8 +127,9 @@ void main() {
   runApp(
     MaterialApp(
       home: Scaffold(
-        body: GameWidget(game: kDebugMode ? Saltarin() : game),
+        body: GameWidget(game : game),
       ),
     ),
   );
 }
+
